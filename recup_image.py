@@ -52,17 +52,16 @@ dossier_images = 'images_films'
 if not os.path.exists(dossier_images):
     os.makedirs(dossier_images)
 
-# Fonction pour récupérer l'image d'affiche à partir de Wikipédia
+# Fonction pour récupérer l'image d'affiche à partir d'OMDb API
 def get_image_url(film_name):
-    search_url = f"https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles={film_name}&pithumbsize=500"
-    response = requests.get(search_url)
+    # L'URL de l'OMDb API (version gratuite, pas de clé API nécessaire pour les requêtes publiques)
+    api_url = f"http://www.omdbapi.com/?t={film_name}&apikey=703021a8"
+    response = requests.get(api_url)
     data = response.json()
-    pages = data['query']['pages']
-    
-    # Recherche de l'URL de l'image
-    for page_id, page_data in pages.items():
-        if 'thumbnail' in page_data:
-            return page_data['thumbnail']['source']
+
+    # Vérifie si la requête a réussi et s'il y a une image
+    if data.get('Response') == 'True' and 'Poster' in data:
+        return data['Poster']
     return None
 
 # Téléchargement et sauvegarde des images
@@ -71,7 +70,7 @@ for film in films:
         # Récupérer l'URL de l'image
         image_url = get_image_url(film)
         
-        if image_url:
+        if image_url and image_url != "N/A":
             # Télécharger l'image
             response = requests.get(image_url)
             response.raise_for_status()  # Vérifier que la requête a réussi

@@ -36,7 +36,7 @@ films = {
 }
 
 # Dossier où les images seront enregistrées
-dossier_images = 'images_films'
+dossier_images = 'tp1/imagess'
 
 # Crée le dossier s'il n'existe pas
 if not os.path.exists(dossier_images):

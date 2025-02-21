@@ -1,76 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 
-class Film {
-  final String id;
-  final String titre;
-  final String image;
-  final String resume;
-  final String duree;
-  final List<String> genre;
-  final double note;
-  final String realisateur;
-  final List<String> acteurs;
-
-  Film({
-    required this.id,
-    required this.titre,
-    required this.image,
-    required this.resume,
-    required this.duree,
-    required this.genre,
-    required this.note,
-    required this.realisateur,
-    required this.acteurs,
-  });
-
-  factory Film.fromJson(Map<String, dynamic> json) {
-    return Film(
-      id: json['Id'] as String,
-      titre: json['Title'] as String,
-      image: json["PosterImage"] as String,
-      resume: json['Summary'] as String,
-      duree: json['Duration'] as String,
-      genre: List<String>.from(json['Genre']),
-      note: (json['Rating'] as num).toDouble(),
-      realisateur: json['Director'] as String,
-      acteurs: List<String>.from(json['MainActors']),
-    );
-  }
-}
-
-class MyAppState extends ChangeNotifier {
-  List<Film> films = [];
-  bool isLoading = true;
-  String? error;
-
-  MyAppState() {
-    loadFilms();
-  }
-
-  Future<void> loadFilms() async {
-    try {
-      final String jsonString = await rootBundle.loadString('assets/films.json');
-      final List<dynamic> jsonResponse = json.decode(jsonString);
-      films = jsonResponse.map((film) => Film.fromJson(film)).toList();
-    } catch (e) {
-      error = 'Erreur lors du chargement des films: $e';
-    } finally {
-      isLoading = false;
-      notifyListeners();
-    }
-  }
-}
-
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: const MyApp(),
-    ),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -78,94 +10,198 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Films',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const FilmsListPage(),
-    );
-  }
-}
-
-class FilmsListPage extends StatelessWidget {
-  const FilmsListPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Liste des Films')),
-      body: Consumer<MyAppState>(
-        builder: (context, appState, child) {
-          if (appState.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (appState.error != null) {
-            return Center(child: Text(appState.error!));
-          } else if (appState.films.isEmpty) {
-            return const Center(child: Text('Aucun film trouvé.'));
-          }
-
-          return ListView.builder(
-            itemCount: appState.films.length,
-            itemBuilder: (context, index) {
-              final film = appState.films[index];
-              return ListTile(
-                leading: Image.network(
-                  film.image,
-                  width: 50,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.image),
-                ),
-                title: Text(film.titre),
-                subtitle: Text(film.realisateur),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => FilmDetailPage(film: film),
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        },
+    return ChangeNotifierProvider(
+      create: (context) => MyAppState(),
+      child: MaterialApp(
+        title: 'Namer App',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 14, 97, 14)),
+        ),
+        home: MyHomePage(),
       ),
     );
   }
 }
 
-class FilmDetailPage extends StatelessWidget {
-  final Film film;
+class MyAppState extends ChangeNotifier {
+  var current = WordPair.random();
+  // ↓ Add this.
+  void getNext() {
+    current = WordPair.random();
+    notifyListeners();
+  }
+  var favorites = <WordPair>[];
 
-  const FilmDetailPage({super.key, required this.film});
+  void toggleFavorite() {
+    if (favorites.contains(current)) {
+      favorites.remove(current);
+    } else {
+      favorites.add(current);
+    }
+    notifyListeners();
+  }
+}
+
+
+class MyHomePage extends StatefulWidget {
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  var selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(film.titre)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(child: Image.network(film.image, height: 300)),
-            const SizedBox(height: 16),
-            Text(
-              film.titre,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            Text('Réalisateur: ${film.realisateur}', style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 8),
-            Text('Acteurs: ${film.acteurs.join(', ')}', style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 8),
-            Text('Durée: ${film.duree}', style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 8),
-            Text('Genre: ${film.genre.join(', ')}', style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 8),
-            Text('Note: ${film.note}', style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 16),
-            Text(film.resume, style: const TextStyle(fontSize: 16)),
-          ],
+    Widget page;
+    switch (selectedIndex) {
+      case 0:
+        page = GeneratorPage();
+        break;
+      case 1:
+        page = FavoritesPage();
+        break;
+      default:
+        throw UnimplementedError('no widget for $selectedIndex');
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Scaffold(
+          body: Row(
+            children: [
+              SafeArea(
+                child: NavigationRail(
+                  extended: constraints.maxWidth >= 600,
+                  destinations: [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.home),
+                      label: Text('Home'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.favorite),
+                      label: Text('Favorites'),
+                    ),
+                  ],
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: (value) {
+                    setState(() {
+                      selectedIndex = value;
+                    });
+                  },
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: page,  // ← Here.
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    );
+  }
+}
+
+class FavoritesPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
+    if (appState.favorites.isEmpty) {
+      return Center(
+        child: Text('No favorites yet.'),
+      );
+    }
+
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('You have '
+              '${appState.favorites.length} favorites:'),
         ),
+        for (var pair in appState.favorites)
+          ListTile(
+            leading: Icon(Icons.favorite),
+            title: Text(pair.asLowerCase),
+          ),
+      ],
+    );
+  }
+
+} 
+
+
+class GeneratorPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var pair = appState.current;
+
+    IconData icon;
+    if (appState.favorites.contains(pair)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border;
+    }
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          BigCard(pair: pair),
+          SizedBox(height: 10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () {
+                  appState.toggleFavorite();
+                },
+                icon: Icon(icon),
+                label: Text('Like'),
+              ),
+              SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () {
+                  appState.getNext();
+                },
+                child: Text('Next'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BigCard extends StatelessWidget {
+  const BigCard({
+    super.key,
+    required this.pair,
+  });
+
+  final WordPair pair;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme= Theme.of(context);
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+      //backgroundColor: Color.fromRGBO(0,0,255,1.0)
+        
+    );
+    return Card(
+      color: theme.colorScheme.primary,
+      elevation:0.0,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Text(pair.asLowerCase, style: style),
       ),
     );
   }

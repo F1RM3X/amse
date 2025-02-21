@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'film.dart';
+import '../film.dart';
 
 Future<List<Film>> loadFilms() async {
   final String jsonString = await rootBundle.loadString('assets/films.json');

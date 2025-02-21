@@ -213,9 +213,9 @@
         "Title": "We Live in Time",
         "PosterImage": "images/We Live in Time.jpg",
         "Summary": "A love story that spans decades, revealing how lives intertwine over time.",
-        "Duration": "TBD",
+        "Duration": "108 min",
         "Genre": ["Drama", "Romance"],
-        "Rating": "TBD",
+        "Rating": 7.0,
         "Director": "John Crowley",
         "MainActors": ["Florence Pugh", "Andrew Garfield"]
     },

@@ -29,14 +29,14 @@ class Film {
   factory Film.fromJson(Map<String, dynamic> json) {
     return Film(
       id: json['Id'] as String,
-      titre: json['Titre'] as String,
-      image: json["Image de l'affiche du film"] as String,
-      resume: json['Résumé'] as String,
-      duree: json['Durée'] as String,
+      titre: json['Title'] as String,
+      image: json["PosterImage"] as String,
+      resume: json['Summary'] as String,
+      duree: json['Duration'] as String,
       genre: List<String>.from(json['Genre']),
-      note: (json['Note'] as num).toDouble(),
-      realisateur: json['Réalisateur'] as String,
-      acteurs: List<String>.from(json['Acteurs principaux']),
+      note: (json['Rating'] as num).toDouble(),
+      realisateur: json['Director'] as String,
+      acteurs: List<String>.from(json['MainActors']),
     );
   }
 }

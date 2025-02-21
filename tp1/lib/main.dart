@@ -1,7 +1,60 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => MyAppState(),
+      child: MaterialApp(
+        title: 'Film App',
+        theme: ThemeData(primarySwatch: Colors.blue),
+        home: const MainScreen(),
+      ),
+    );
+  }
+}
+
+class MyAppState extends ChangeNotifier {
+  List<Film> films = [];
+  List<Film> favoris = [];
+  String? error;
+  bool isLoading = true;
+
+  MyAppState() {
+    loadFilms();
+  }
+
+  Future<void> loadFilms() async {
+    try {
+      final String jsonString = await rootBundle.loadString('assets/films.json');
+      final List<dynamic> jsonResponse = json.decode(jsonString);
+      films = jsonResponse.map((film) => Film.fromJson(film)).toList();
+    } catch (e) {
+      error = 'Erreur lors du chargement des films: $e';
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void toggleFavori(Film film) {
+    if (favoris.contains(film)) {
+      favoris.remove(film);
+    } else {
+      favoris.add(film);
+    }
+    notifyListeners();
+  }
+}
 
 class Film {
   final String id;
@@ -30,7 +83,7 @@ class Film {
     return Film(
       id: json['Id'] as String,
       titre: json['Titre'] as String,
-      image: json["Image de l'affiche du film"] as String,
+      image: json['Image de l\'affiche du film'] as String,
       resume: json['Résumé'] as String,
       duree: json['Durée'] as String,
       genre: List<String>.from(json['Genre']),
@@ -41,129 +94,141 @@ class Film {
   }
 }
 
-class MyAppState extends ChangeNotifier {
-  List<Film> films = [];
-  bool isLoading = true;
-  String? error;
-
-  MyAppState() {
-    loadFilms();
-  }
-
-  Future<void> loadFilms() async {
-    try {
-      final String jsonString = await rootBundle.loadString('assets/films.json');
-      final List<dynamic> jsonResponse = json.decode(jsonString);
-      films = jsonResponse.map((film) => Film.fromJson(film)).toList();
-    } catch (e) {
-      error = 'Erreur lors du chargement des films: $e';
-    } finally {
-      isLoading = false;
-      notifyListeners();
-    }
-  }
-}
-
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: const MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Films',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const FilmsListPage(),
-    );
-  }
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class FilmsListPage extends StatelessWidget {
-  const FilmsListPage({super.key});
+class _MainScreenState extends State<MainScreen> {
+  int _currentIndex = 0;
+
+  final List<Widget> _screens = [
+    const FilmListScreen(),
+    const FavorisScreen(),
+    const DebugInspector(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Liste des Films')),
-      body: Consumer<MyAppState>(
-        builder: (context, appState, child) {
-          if (appState.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (appState.error != null) {
-            return Center(child: Text(appState.error!));
-          } else if (appState.films.isEmpty) {
-            return const Center(child: Text('Aucun film trouvé.'));
-          }
-
-          return ListView.builder(
-            itemCount: appState.films.length,
-            itemBuilder: (context, index) {
-              final film = appState.films[index];
-              return ListTile(
-                leading: Image.network(
-                  film.image,
-                  width: 50,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.image),
-                ),
-                title: Text(film.titre),
-                subtitle: Text(film.realisateur),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => FilmDetailPage(film: film),
-                    ),
-                  );
-                },
-              );
-            },
-          );
+      body: _screens[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
         },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.movie),
+            label: 'Films',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favoris',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bug_report),
+            label: 'Debug',
+          ),
+        ],
       ),
     );
   }
 }
 
-class FilmDetailPage extends StatelessWidget {
-  final Film film;
-
-  const FilmDetailPage({super.key, required this.film});
+class FilmListScreen extends StatelessWidget {
+  const FilmListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(film.titre)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(child: Image.network(film.image, height: 300)),
-            const SizedBox(height: 16),
-            Text(
-              film.titre,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    final appState = context.watch<MyAppState>();
+
+    if (appState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (appState.error != null) {
+      return Center(child: Text(appState.error!));
+    }
+
+    return ListView.builder(
+      itemCount: appState.films.length,
+      itemBuilder: (context, index) {
+        final film = appState.films[index];
+        final isFavori = appState.favoris.contains(film);
+
+        return ListTile(
+          leading: Image.network(film.image, width: 50, fit: BoxFit.cover),
+          title: Text(film.titre),
+          subtitle: Text(film.realisateur),
+          trailing: IconButton(
+            icon: Icon(
+              isFavori ? Icons.favorite : Icons.favorite_border,
+              color: isFavori ? Colors.red : null,
             ),
-            Text('Réalisateur: ${film.realisateur}', style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 8),
-            Text('Acteurs: ${film.acteurs.join(', ')}', style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 8),
-            Text('Durée: ${film.duree}', style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 8),
-            Text('Genre: ${film.genre.join(', ')}', style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 8),
-            Text('Note: ${film.note}', style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 16),
-            Text(film.resume, style: const TextStyle(fontSize: 16)),
+            onPressed: () => appState.toggleFavori(film),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class FavorisScreen extends StatelessWidget {
+  const FavorisScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<MyAppState>();
+
+    if (appState.favoris.isEmpty) {
+      return const Center(child: Text('Aucun film favori'));
+    }
+
+    return ListView.builder(
+      itemCount: appState.favoris.length,
+      itemBuilder: (context, index) {
+        final film = appState.favoris[index];
+
+        return ListTile(
+          leading: Image.network(film.image, width: 50, fit: BoxFit.cover),
+          title: Text(film.titre),
+          subtitle: Text(film.realisateur),
+          trailing: IconButton(
+            icon: const Icon(Icons.remove_circle, color: Colors.red),
+            onPressed: () => appState.toggleFavori(film),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class DebugInspector extends StatelessWidget {
+  const DebugInspector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final appState = context.watch<MyAppState>();
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Debug Inspector')),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView(
+          children: [
+            Text('Films chargés: ${appState.films.length}'),
+            Text('Favoris: ${appState.favoris.map((f) => f.titre).join(", ")}'),
+            if (appState.error != null)
+              Text('Erreur: ${appState.error}', style: const TextStyle(color: Colors.red)),
+            ElevatedButton(
+              onPressed: () => appState.loadFilms(),
+              child: const Text('Recharger les films'),
+            ),
           ],
         ),
       ),

@@ -221,7 +221,7 @@
     },
     {
         "Id": "21",
-        "Title": "Star Wars: The Empire Strikes Back",
+        "Title": "Star Wars The Empire Strikes Back",
         "PosterImage": "images/Star Wars The Empire Strikes Back.jpg",
         "Summary": "After the Rebels are brutally overpowered by the Empire on the ice planet Hoth, Luke Skywalker begins Jedi training with Yoda.",
         "Duration": "124 min",
@@ -386,8 +386,8 @@
     },
     {
         "Id": "36",
-        "Title": "Spider Man 2",
-        "PosterImage": "images/Spider Man 2.jpg",
+        "Title": "Spider-Man 2",
+        "PosterImage": "images/Spider-Man 2.jpg",
         "Summary": "Peter Parker struggles to balance his crime-fighting duties as Spider-Man with the demands of his normal life.",
         "Duration": "127 min",
         "Genre": ["Action", "Adventure", "Sci-Fi"],
@@ -419,8 +419,8 @@
   },
   {
     "Id": "39",
-    "Title": "Star Wars Episode III Revenge of the Sith",
-    "PosterImage": "images/Star Wars Episode III Revenge of the Sith.jpg",
+    "Title": "Star Wars Episode III - Revenge of the Sith",
+    "PosterImage": "images/Star Wars Episode III - Revenge of the Sith.jpg",
     "Summary": "Three years into the Clone Wars, Obi-Wan Kenobi pursues a new threat, while Anakin Skywalker acts as a double agent between the Jedi Council and Palpatine.",
     "Duration": "140 min",
     "Genre": ["Action", "Adventure", "Fantasy"],

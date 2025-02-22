@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
@@ -40,7 +39,7 @@ class MyAppState extends ChangeNotifier {
 
   //chargement des films, conversion en objet Film et ajout liste films
   Future<void> loadFilms() async{ //utilisation d'un Future car il y a un chargement (objet qui représente une valeur pas forcément dispo immédiatement)
-    final String jsonString = await rootBundle.loadString('assets/film.json');//chargement du json
+    final String jsonString = await rootBundle.loadString('assets/films.json');//chargement du json
     final List<dynamic> jsonResponse = json.decode(jsonString);//décodage pour qu'il soit lisible par Dart
     films = jsonResponse.map((film)=> Film.fromJson(film)).toList();//chaque entrée json -> objet Film et placé dans la liste films
     isLoading= false;
@@ -130,7 +129,7 @@ class HomePage extends StatelessWidget{
       itemBuilder: (context, index){
         final film = appState.films[index];
         return ListTile(
-          leading: Image.asset('assets/images/${film.image}', width: 50),
+          leading: Image.asset('assets/${film.image}', width: 50),
           title: Text(film.titre),
           subtitle: Text('${film.realisateur} - ${film.genre.join(',')}'),
           onTap:(){
@@ -156,30 +155,30 @@ class FilmPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    bool isLiked = appState.likedFilms.contains(film);
+    bool isLiked = appState.likes.contains(film);
     bool inWatchList = appState.watchList.contains(film);
 
     return Scaffold(
-      appBar: AppBar(title: Text(film.title)),
+      appBar: AppBar(title: Text(film.titre)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Image.asset('assets/images/${film.posterImage}'),
+            Image.asset('assets/${film.image}'),
             SizedBox(height: 10),
-            Text(film.summary),
+            Text(film.resume),
             SizedBox(height: 10),
-            Text('Director: ${film.director}'),
-            Text('Duration: ${film.duration}'),
+            Text('Director: ${film.realisateur}'),
+            Text('Duration: ${film.duree}'),
             Text('Genre: ${film.genre.join(', ')}'),
-            Text('Rating: ${film.rating}/10'),
+            Text('Rating: ${film.note}/10'),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
                   icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border),
                   onPressed: () {
-                    appState.toggleLike(film);
+                    appState.toggleLikes(film);
                   },
                 ),
                 IconButton(

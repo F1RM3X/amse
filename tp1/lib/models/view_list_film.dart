@@ -132,16 +132,32 @@ class ViewListFilm extends StatelessWidget{
                       leading: Image.asset('lib/assets/${film.image}', fit: BoxFit.cover),
                       title: Text(film.titre),
                       subtitle: Text('${film.realisateur} - ${film.genre.join(',')}'),
-                      onTap: () {
+                      trailing: Expanded(
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                appState.likes.contains(film) ? Icons.favorite : Icons.favorite_border,
+                                
+                              ),
+                              onPressed: () => appState.toggleLikes(film),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                appState.watchList.contains(film) ? Icons.watch_later : Icons.watch_later_outlined,
+                                
+                              ),
+                              onPressed: () => appState.toggleWatchList(film),
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                        onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => FilmPage(film: film)),
                         );
                       }
                     )
-                );
-              }))])));
-}}
-
-
-
+                );}))])));}}

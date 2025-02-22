@@ -16,6 +16,7 @@ class MyAppState extends ChangeNotifier {
   String selectedDirectorWL= 'All';
   bool isLoading = true;
   String? error;
+  
 
   MyAppState(){
     loadFilms();
@@ -60,7 +61,7 @@ class MyAppState extends ChangeNotifier {
   }
 
   void updateGenre (String genre, String page){
-    if (page == 'Home'){
+    if (page == 'Great Movies App'){
     selectedGenreHome= genre;
     notifyListeners();
     }
@@ -68,14 +69,14 @@ class MyAppState extends ChangeNotifier {
     selectedGenreLike= genre;
     notifyListeners();
     }
-    else if (page == 'WL'){
+    else if (page == 'WatchList'){
     selectedGenreWL= genre;
     notifyListeners();
     }
   }
 
   void updateDirector (String director, String page){
-    if (page=='Home'){
+    if (page=='Great Movies App'){
     selectedDirectorHome= director;
     notifyListeners();
   }
@@ -83,7 +84,7 @@ class MyAppState extends ChangeNotifier {
     selectedDirectorLike= director;
     notifyListeners();
   }
-  else if (page=='WL'){
+  else if (page=='WatchList'){
     selectedDirectorWL= director;
     notifyListeners();
   }
@@ -94,7 +95,7 @@ class MyAppState extends ChangeNotifier {
   List<Film> get filteredFilmsHome{
     return films.where((film){
       final genreMatch = selectedGenreHome == 'All' || film.genre.contains(selectedGenreHome);
-      final directorMatch = selectedDirectorHome == 'All' || film.realisateur.toLowerCase().trim==selectedDirectorHome.toLowerCase().trim;
+      final directorMatch = selectedDirectorHome == 'All' || film.realisateur.toLowerCase().trim()==selectedDirectorHome.toLowerCase().trim();
       return genreMatch && directorMatch;
     }).toList();
   }
@@ -102,7 +103,7 @@ class MyAppState extends ChangeNotifier {
   List<Film> get filteredFilmsLike{
     return likes.where((film){
       final genreMatch = selectedGenreLike == 'All' || film.genre.contains(selectedGenreLike);
-      final directorMatch = selectedDirectorLike == 'All' || film.realisateur.toLowerCase().trim==selectedDirectorLike.toLowerCase().trim;
+      final directorMatch = selectedDirectorLike == 'All' || film.realisateur.toLowerCase().trim()==selectedDirectorLike.toLowerCase().trim();
       return genreMatch && directorMatch;
     }).toList();
   }
@@ -110,7 +111,7 @@ class MyAppState extends ChangeNotifier {
   List<Film> get filteredFilmsWL{
     return watchList.where((film){
       final genreMatch = selectedGenreWL == 'All' || film.genre.contains(selectedGenreWL);
-      final directorMatch = selectedDirectorWL == 'All' || film.realisateur.toLowerCase().trim==selectedDirectorWL.toLowerCase().trim;
+      final directorMatch = selectedDirectorWL == 'All' || film.realisateur.toLowerCase().trim()==selectedDirectorWL.toLowerCase().trim();
       return genreMatch && directorMatch;
     }).toList();
   }

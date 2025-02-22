@@ -36,6 +36,10 @@ class MyAppState extends ChangeNotifier {
   bool isLoading = true;
   String? error;
 
+  MyAppState(){
+    loadFilms();
+  }
+
     //chargement des films, conversion en objet Film et ajout liste films
   Future<void> loadFilms() async{ //utilisation d'un Future car il y a un chargement (objet qui représente une valeur pas forcément dispo immédiatement)
     try{
@@ -203,7 +207,9 @@ class HomePage extends StatelessWidget{
                   }).toList(),
                   ),
               ),
-            
+            ],
+          ),
+        ),
         Expanded(
           child: ListView.builder(
             itemCount: appState.films.length,
@@ -225,7 +231,7 @@ class HomePage extends StatelessWidget{
           ),
         ),
       ],
-    ))]);
+    );
   }
 }
 
@@ -313,7 +319,7 @@ class WatchListPage extends StatelessWidget{
 
     if (appState.watchList.isEmpty) {
       return Center(
-        child: Text('No liked films yet.'),
+        child: Text('No films add yet.'),
       );
     }
 

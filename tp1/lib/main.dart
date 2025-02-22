@@ -31,19 +31,27 @@ class MyAppState extends ChangeNotifier {
   List<Film> films=[];
   List<Film> watchList=[];
   List<Film> likes=[];
+  String selectedGenre = 'All';
+  String selectedDirector= 'All';
   bool isLoading = true;
+  String? error;
 
-  MyAppState(){
-    loadFilms();
-  }
-
-  //chargement des films, conversion en objet Film et ajout liste films
+    //chargement des films, conversion en objet Film et ajout liste films
   Future<void> loadFilms() async{ //utilisation d'un Future car il y a un chargement (objet qui représente une valeur pas forcément dispo immédiatement)
-    final String jsonString = await rootBundle.loadString('assets/films.json');//chargement du json
-    final List<dynamic> jsonResponse = json.decode(jsonString);//décodage pour qu'il soit lisible par Dart
-    films = jsonResponse.map((film)=> Film.fromJson(film)).toList();//chaque entrée json -> objet Film et placé dans la liste films
-    isLoading= false;
-    notifyListeners();
+    try{
+      final String jsonString = await rootBundle.loadString('assets/films.json');//chargement du json
+      final List<dynamic> jsonResponse = json.decode(jsonString);//décodage pour qu'il soit lisible par Dart
+      films = jsonResponse.map((film)=> Film.fromJson(film)).toList();//chaque entrée json -> objet Film et placé dans la liste films
+      isLoading= false;
+      notifyListeners();
+    }
+    catch (e) {
+      error= 'error loading films: $e';
+    }
+    finally{
+      isLoading= false;
+      notifyListeners();
+    }
   }
 
   //gestion des favoris
@@ -64,6 +72,24 @@ class MyAppState extends ChangeNotifier {
       watchList.add(film);
     }
     notifyListeners();
+  }
+
+  void updateGenre (String genre){
+    selectedGenre= genre;
+    notifyListeners();
+  }
+
+  void updateDirector (String director){
+    selectedDirector= director;
+    notifyListeners();
+  }
+
+  List<Film> get filteredFilms{
+    return films.where((film){
+      final genreMatch = selectedGenre == 'All' || film.genre.contains(selectedGenre);
+      final directorMatch = selectedDirector == 'All' || film.realisateur.contains(selectedDirector);
+      return genreMatch && directorMatch;
+    }).toList();
   }
 
 }
@@ -124,24 +150,82 @@ class HomePage extends StatelessWidget{
         );
     }
 
-    return ListView.builder(
-      itemCount: appState.films.length,
-      itemBuilder: (context, index){
-        final film = appState.films[index];
-        return ListTile(
-          leading: Image.asset('assets/${film.image}', width: 50),
-          title: Text(film.titre),
-          subtitle: Text('${film.realisateur} - ${film.genre.join(',')}'),
-          onTap:(){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context)=> FilmPage(film:film)),
-              );
-          },
-          );
+    final genres = ['All'];
+    for ( var film in appState.films){
+      for (var genre in film.genre){
+        if (genres.contains(genre)==false){
+          genres.add(genre);
+        }
+      }
+    }
 
-      },
-    );
+    final realisateurs = ['All'];
+    for ( var film in appState.films){
+        if (realisateurs.contains(film.realisateur)== false){
+          realisateurs.add(film.realisateur);
+        }
+      
+    }
+
+
+
+
+
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: DropdownButton<String>(
+                  value: appState.selectedGenre,
+                  onChanged: (value)=> appState.updateGenre(value!),
+                  items: genres.map((genre){
+                    return DropdownMenuItem(
+                      value: genre,
+                      child: Text(genre),
+                    );
+                  }).toList(),
+                  ),
+              ),
+              const SizedBox(width: 10),
+               Expanded(
+                child: DropdownButton<String>(
+                  value: appState.selectedDirector,
+                  onChanged: (value)=> appState.updateDirector(value!),
+                  items: realisateurs.map((realisateur){
+                    return DropdownMenuItem(
+                      value: realisateur,
+                      child: Text(realisateur),
+                    );
+                  }).toList(),
+                  ),
+              ),
+            
+        Expanded(
+          child: ListView.builder(
+            itemCount: appState.films.length,
+            itemBuilder: (context, index){
+              final film = appState.films[index];
+              return ListTile(
+                leading: Image.asset('assets/${film.image}', width: 50),
+                title: Text(film.titre),
+                subtitle: Text('${film.realisateur} - ${film.genre.join(',')}'),
+                onTap:(){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context)=> FilmPage(film:film)),
+                    );
+                },
+                );
+          
+            },
+          ),
+        ),
+      ],
+    ))]);
   }
 }
 

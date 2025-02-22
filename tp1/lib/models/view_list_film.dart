@@ -89,32 +89,51 @@ class ViewListFilm extends StatelessWidget{
         // Cette partie prend un espace limité et n'empêche pas l'AppBar d'être visible
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(
+          
+          child: Column(
             children: [
-              Expanded(
-                child: DropdownButton<String>(
-                  value: selectedGenre,
-                  onChanged: (value) => appState.updateGenre(value!, name),
-                  items: genres.map((genre) {
-                    return DropdownMenuItem(
-                      value: genre,
-                      child: Text(genre),
-                    );
-                  }).toList(),
-                ),
+              Row(
+                children: [
+                  Text('Filter by'),
+                  const SizedBox(width: 20),
+                  Text('Genre'),
+                  const SizedBox(width:100),
+                  Text('Director'),
+
+                ]
+                
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: DropdownButton<String>(
-                  value: selectedDirector,
-                  onChanged: (value) => appState.updateDirector(value!, name),
-                  items: realisateurs.map((realisateur) {
-                    return DropdownMenuItem(
-                      value: realisateur,
-                      child: Text(realisateur),
-                    );
-                  }).toList(),
-                ),
+              Row(
+                children: [
+                  const SizedBox(width: 80),
+                  Expanded(
+                    child: DropdownButton<String>(
+                      
+                      value: selectedGenre,
+                      onChanged: (value) => appState.updateGenre(value!, name),
+                      items: genres.map((genre) {
+                        return DropdownMenuItem(
+                          
+                          value: genre,
+                          child: Text(genre),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: DropdownButton<String>(
+                      value: selectedDirector,
+                      onChanged: (value) => appState.updateDirector(value!, name),
+                      items: realisateurs.map((realisateur) {
+                        return DropdownMenuItem(
+                          value: realisateur,
+                          child: Text(realisateur),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -132,25 +151,24 @@ class ViewListFilm extends StatelessWidget{
                       leading: Image.asset('lib/assets/${film.image}', fit: BoxFit.cover),
                       title: Text(film.titre),
                       subtitle: Text('${film.realisateur} - ${film.genre.join(',')}'),
-                      trailing: Expanded(
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                appState.likes.contains(film) ? Icons.favorite : Icons.favorite_border,
-                                
-                              ),
-                              onPressed: () => appState.toggleLikes(film),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              appState.likes.contains(film) ? Icons.favorite : Icons.favorite_border,
+                              
                             ),
-                            IconButton(
-                              icon: Icon(
-                                appState.watchList.contains(film) ? Icons.watch_later : Icons.watch_later_outlined,
-                                
-                              ),
-                              onPressed: () => appState.toggleWatchList(film),
+                            onPressed: () => appState.toggleLikes(film),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              appState.watchList.contains(film) ? Icons.watch_later : Icons.watch_later_outlined,
+                              
                             ),
-                          ],
-                        ),
+                            onPressed: () => appState.toggleWatchList(film),
+                          ),
+                        ],
                       ),
                       
                         onTap: () {

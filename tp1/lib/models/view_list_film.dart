@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
-import 'film_page.dart';
+import 'film.dart';
+import '../pages/film_page.dart';
 
-class HomePage extends StatelessWidget{
+class ViewListFilm extends StatelessWidget{
+  final String name;
+  final List<Film> filmList;
+
+  
+  ViewListFilm({
+    required this.name,
+    required this.filmList
+
+});
+  
+  
+  
   @override
   Widget build(BuildContext context){
     var appState = context.watch<MyAppState>();
 
-    if (appState.isLoading){
-      return const Center(
-        child: CircularProgressIndicator()
-        );
-    }
-
     final genres = ['All'];
-    for ( var film in appState.films){
+    for ( var film in filmList){
       for (var genre in film.genre){
         if (genres.contains(genre)==false){
           genres.add(genre);
@@ -25,16 +32,19 @@ class HomePage extends StatelessWidget{
     
 
     final realisateurs = ['All'];
-    for ( var film in appState.films){
+    for ( var film in filmList){
         if (realisateurs.contains(film.realisateur)== false){
           realisateurs.add(film.realisateur);
         }
       
     }
 
-    return Scaffold(
+
+
+
+  return Scaffold(
   appBar: AppBar(
-    title: Center(child: Text('Great Movies App')),
+    title: Center(child: Text(name)),
   ),
   body: Padding(
     padding: const EdgeInsets.all(16.0),
@@ -94,4 +104,8 @@ class HomePage extends StatelessWidget{
                       }
                     )
                 );
-              }))])));}}
+              }))])));
+}}
+
+
+

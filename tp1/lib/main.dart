@@ -1,5 +1,9 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'film.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,10 +17,10 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'Namer App',
+        title: 'Great Movies App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 14, 97, 14)),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 5, 182, 43)),
         ),
         home: MyHomePage(),
       ),
@@ -25,22 +29,44 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-  // ↓ Add this.
-  void getNext() {
-    current = WordPair.random();
+  List<Film> films=[];
+  List<Film> watchList=[];
+  List<Film> likes=[];
+  bool isLoading = true;
+
+  MyAppState(){
+    loadFilms();
+  }
+
+  //chargement des films, conversion en objet Film et ajout liste films
+  Future<void> loadFilms() async{ //utilisation d'un Future car il y a un chargement (objet qui représente une valeur pas forcément dispo immédiatement)
+    final String jsonString = await rootBundle.loadString('assets/film.json');//chargement du json
+    final List<dynamic> jsonResponse = json.decode(jsonString);//décodage pour qu'il soit lisible par Dart
+    films = jsonResponse.map((film)=> Film.fromJson(film)).toList();//chaque entrée json -> objet Film et placé dans la liste films
+    isLoading= false;
     notifyListeners();
   }
-  var favorites = <WordPair>[];
 
-  void toggleFavorite() {
-    if (favorites.contains(current)) {
-      favorites.remove(current);
+  //gestion des favoris
+  void toggleLikes(Film film) {
+    if (likes.contains(film)) {
+      likes.remove(film);
     } else {
-      favorites.add(current);
+      likes.add(film);
     }
     notifyListeners();
   }
+
+  //gestion de la watchList
+  void toggleWatchList(Film film) {
+    if (watchList.contains(film)) {
+      watchList.remove(film);
+    } else {
+      watchList.add(film);
+    }
+    notifyListeners();
+  }
+
 }
 
 
@@ -55,18 +81,95 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     Widget page;
+    //changement de pages
     switch (selectedIndex) {
       case 0:
-        page = GeneratorPage();
+        page = HomePage();
         break;
-      case 1:
-        page = FavoritesPage();
+      /*case 1:
+        page = LikePage();
         break;
+      case 2:
+        page = WatchListPage();*/
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
+    return Scaffold(
+      //barre de navigation
+      body: page,
+      bottomNavigationBar: BottomNavigationBar(
+        items: const[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Likes'),
+          BottomNavigationBarItem(icon: Icon(Icons.watch_later), label: 'WatchList'),
+        ],
+        currentIndex: selectedIndex,
+        onTap: (value) {
+                    setState(() {
+                      selectedIndex = value;
+                    });
+        },
+        ),
+    );
+  }
+}
 
-    return LayoutBuilder(
+class HomePage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    var appState = context.watch<MyAppState>();
+
+    if (appState.isLoading){
+      return const Center(
+        child: CircularProgressIndicator()
+        );
+    }
+
+    return ListView.builder(
+      itemCount: appState.films.length,
+      itemBuilder: (context, index){
+        final film = appState.films[index];
+        return ListTile(
+          leading: Image.asset('assets/images/${film.image}', width: 50),
+          title: Text(film.titre),
+          subtitle: Text('${film.realisateur} - ${film.genre.join(',')}'),
+          onTap:(){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context)=> FilmPage(film:film)),
+              );
+          },
+          );
+
+      },
+    );
+  }
+}
+
+class FilmPage extends StatelessWidget{
+  final Film film;
+
+  FilmPage({
+    required this.film
+  });
+
+  @override
+  Widget build(BuildContext context){
+    var appState = context.watch<MyAppState>();
+    bool isLiked = appState.likes.contains(film);
+    bool isWatchlist = appState.watchList.contains(film);
+
+    return Scaffold(
+      appBar: AppBar(title: Text(film.titre)),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0) ,
+        )
+    )
+
+    
+}
+
+    /*return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
           body: Row(
@@ -104,9 +207,9 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     );
   }
-}
+}*/
 
-class FavoritesPage extends StatelessWidget{
+/*class FavoritesPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -133,10 +236,10 @@ class FavoritesPage extends StatelessWidget{
     );
   }
 
-} 
+} */
 
 
-class GeneratorPage extends StatelessWidget {
+/*class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -178,9 +281,9 @@ class GeneratorPage extends StatelessWidget {
       ),
     );
   }
-}
+}*/
 
-class BigCard extends StatelessWidget {
+/*class BigCard extends StatelessWidget {
   const BigCard({
     super.key,
     required this.pair,
@@ -204,5 +307,4 @@ class BigCard extends StatelessWidget {
         child: Text(pair.asLowerCase, style: style),
       ),
     );
-  }
-}
+  }*/

@@ -154,17 +154,47 @@ class FilmPage extends StatelessWidget{
   });
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    bool isLiked = appState.likes.contains(film);
-    bool isWatchlist = appState.watchList.contains(film);
+    bool isLiked = appState.likedFilms.contains(film);
+    bool inWatchList = appState.watchList.contains(film);
 
     return Scaffold(
-      appBar: AppBar(title: Text(film.titre)),
+      appBar: AppBar(title: Text(film.title)),
       body: Padding(
-        padding: const EdgeInsets.all(16.0) ,
-        )
-    )
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Image.asset('assets/images/${film.posterImage}'),
+            SizedBox(height: 10),
+            Text(film.summary),
+            SizedBox(height: 10),
+            Text('Director: ${film.director}'),
+            Text('Duration: ${film.duration}'),
+            Text('Genre: ${film.genre.join(', ')}'),
+            Text('Rating: ${film.rating}/10'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border),
+                  onPressed: () {
+                    appState.toggleLike(film);
+                  },
+                ),
+                IconButton(
+                  icon: Icon(inWatchList ? Icons.watch_later : Icons.watch_later_outlined),
+                  onPressed: () {
+                    appState.toggleWatchList(film);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
     
 }

@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget{
         }
       }
     }
-    print(genres);
+    
 
     final realisateurs = ['All'];
     for ( var film in appState.films){
@@ -76,23 +76,28 @@ class HomePage extends StatelessWidget{
 
         // Utilisation de Expanded pour laisser de la place pour l'AppBar
         Expanded(
-          child: ListView.builder(
-            itemCount: appState.filteredFilms.length,
-            itemBuilder: (context, index) {
-              final film = appState.filteredFilms[index];
-              return ListTile(
-                leading: Image.asset('lib/assets/${film.image}', width: 50),
-                title: Text(film.titre),
-                subtitle: Text('${film.realisateur} - ${film.genre.join(',')}'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => FilmPage(film: film)),
-                  );
-                },
-              );
-            },
-          ),
+        
+            child: ListView.builder(
+              itemCount: appState.filteredFilms.length,
+              itemBuilder: (context, index) {
+                final film = appState.filteredFilms[index];
+                return Card(
+                  elevation: 0.0,
+                  child: ListTile(
+                    leading: Image.asset('lib/assets/${film.image}', fit: BoxFit.cover),
+                    title: Text(film.titre),
+                    subtitle: Text('${film.realisateur} - ${film.genre.join(',')}'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FilmPage(film: film)),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          
         ),
       ],
     ),

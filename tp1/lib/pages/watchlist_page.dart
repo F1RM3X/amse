@@ -8,12 +8,16 @@ class WatchListPage extends StatelessWidget{
     var appState = context.watch<MyAppState>();
 
     if (appState.watchList.isEmpty) {
-      return Center(
-        child: Text('No films add yet.'),
+      return Scaffold(
+      appBar: AppBar(title: Center(child: Text('Watchlist'))),
+      body:Center(child:Text('No films add yet.')),
       );
     }
 
-    return ListView.builder(
+    return Scaffold(
+      appBar: AppBar(title: Center(child: Text('WatchList'))),
+      body:
+    ListView.builder(
       itemCount: appState.watchList.length,
       itemBuilder: (context, index){
         final film= appState.watchList[index];
@@ -22,6 +26,6 @@ class WatchListPage extends StatelessWidget{
           title: Text(film.titre)
           );
       }
-    );
+    ));
   }    
 }

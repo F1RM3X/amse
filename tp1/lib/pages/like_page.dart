@@ -9,12 +9,16 @@ class LikePage extends StatelessWidget{
     var appState = context.watch<MyAppState>();
 
     if (appState.likes.isEmpty) {
-      return Center(
-        child: Text('No liked films yet.'),
+      return Scaffold(
+      appBar: AppBar(title: Center(child: Text('Likes'))),
+      body:Center(child: Text('No liked films yet.')),
       );
+      
     }
 
-    return ListView.builder(
+    return Scaffold(
+      appBar: AppBar(title: Center(child: Text('Likes'))),
+      body: ListView.builder(
       itemCount: appState.likes.length,
       itemBuilder: (context, index){
         final film= appState.likes[index];
@@ -23,6 +27,7 @@ class LikePage extends StatelessWidget{
           title: Text(film.titre)
           );
       }
-    );
+    ));
+        
   }    
 } 

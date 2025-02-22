@@ -8,8 +8,12 @@ class MyAppState extends ChangeNotifier {
   List<Film> films=[];
   List<Film> watchList=[];
   List<Film> likes=[];
-  String selectedGenre = 'All';
-  String selectedDirector= 'All';
+  String selectedGenreHome = 'All';
+  String selectedDirectorHome= 'All';
+  String selectedGenreLike = 'All';
+  String selectedDirectorLike= 'All';
+  String selectedGenreWL = 'All';
+  String selectedDirectorWL= 'All';
   bool isLoading = true;
   String? error;
 
@@ -55,20 +59,56 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateGenre (String genre){
-    selectedGenre= genre;
+  void updateGenreHome (String genre){
+    selectedGenreHome= genre;
     notifyListeners();
   }
 
-  void updateDirector (String director){
-    selectedDirector= director;
+  void updateDirectorHome (String director){
+    selectedDirectorHome= director;
     notifyListeners();
   }
 
-  List<Film> get filteredFilms{
+  void updateGenreLike (String genre){
+    selectedGenreLike= genre;
+    notifyListeners();
+  }
+
+  void updateDirectorLike (String director){
+    selectedDirectorLike= director;
+    notifyListeners();
+  }
+
+  void updateGenreWL (String genre){
+    selectedGenreWL= genre;
+    notifyListeners();
+  }
+
+  void updateDirectorWL (String director){
+    selectedDirectorWL= director;
+    notifyListeners();
+  }
+
+  List<Film> get filteredFilmsHome{
     return films.where((film){
-      final genreMatch = selectedGenre == 'All' || film.genre.contains(selectedGenre);
-      final directorMatch = selectedDirector == 'All' || film.realisateur.toLowerCase().trim==selectedDirector.toLowerCase().trim;
+      final genreMatch = selectedGenreHome == 'All' || film.genre.contains(selectedGenreHome);
+      final directorMatch = selectedDirectorHome == 'All' || film.realisateur.toLowerCase().trim==selectedDirectorHome.toLowerCase().trim;
+      return genreMatch && directorMatch;
+    }).toList();
+  }
+
+  List<Film> get filteredFilmsLike{
+    return films.where((film){
+      final genreMatch = selectedGenreLike == 'All' || film.genre.contains(selectedGenreLike);
+      final directorMatch = selectedDirectorLike == 'All' || film.realisateur.toLowerCase().trim==selectedDirectorLike.toLowerCase().trim;
+      return genreMatch && directorMatch;
+    }).toList();
+  }
+
+  List<Film> get filteredFilmsWL{
+    return films.where((film){
+      final genreMatch = selectedGenreWL == 'All' || film.genre.contains(selectedGenreWL);
+      final directorMatch = selectedDirectorWL == 'All' || film.realisateur.toLowerCase().trim==selectedDirectorWL.toLowerCase().trim;
       return genreMatch && directorMatch;
     }).toList();
   }

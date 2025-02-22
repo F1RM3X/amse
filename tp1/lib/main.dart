@@ -85,11 +85,11 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         page = HomePage();
         break;
-      /*case 1:
+      case 1:
         page = LikePage();
         break;
       case 2:
-        page = WatchListPage();*/
+        page = WatchListPage();
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -198,142 +198,50 @@ class FilmPage extends StatelessWidget{
     
 }
 
-    /*return LayoutBuilder(
-      builder: (context, constraints) {
-        return Scaffold(
-          body: Row(
-            children: [
-              SafeArea(
-                child: NavigationRail(
-                  extended: constraints.maxWidth >= 600,
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Home'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Favorites'),
-                    ),
-                  ],
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  },
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: page,  // ← Here.
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-    );
-  }
-}*/
-
-/*class FavoritesPage extends StatelessWidget{
+class LikePage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    if (appState.favorites.isEmpty) {
+    if (appState.likes.isEmpty) {
       return Center(
-        child: Text('No favorites yet.'),
+        child: Text('No liked films yet.'),
       );
     }
 
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('You have '
-              '${appState.favorites.length} favorites:'),
-        ),
-        for (var pair in appState.favorites)
-          ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text(pair.asLowerCase),
-          ),
-      ],
+    return ListView.builder(
+      itemCount: appState.likes.length,
+      itemBuilder: (context, index){
+        final film= appState.likes[index];
+        return ListTile(
+          leading: Image.asset('assets/${film.image}', width: 50) ,
+          title: Text(film.titre)
+          );
+      }
     );
-  }
+  }    
+} 
 
-} */
-
-
-/*class GeneratorPage extends StatelessWidget {
+class WatchListPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var pair = appState.current;
 
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
-    } else {
-      icon = Icons.favorite_border;
+    if (appState.watchList.isEmpty) {
+      return Center(
+        child: Text('No liked films yet.'),
+      );
     }
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite();
-                },
-                icon: Icon(icon),
-                label: Text('Like'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
-            ],
-          ),
-        ],
-      ),
+    return ListView.builder(
+      itemCount: appState.watchList.length,
+      itemBuilder: (context, index){
+        final film= appState.watchList[index];
+        return ListTile(
+          leading: Image.asset('assets/${film.image}', width: 50) ,
+          title: Text(film.titre)
+          );
+      }
     );
-  }
-}*/
-
-/*class BigCard extends StatelessWidget {
-  const BigCard({
-    super.key,
-    required this.pair,
-  });
-
-  final WordPair pair;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme= Theme.of(context);
-    final style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-      //backgroundColor: Color.fromRGBO(0,0,255,1.0)
-        
-    );
-    return Card(
-      color: theme.colorScheme.primary,
-      elevation:0.0,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Text(pair.asLowerCase, style: style),
-      ),
-    );
-  }*/
+  }    
+}

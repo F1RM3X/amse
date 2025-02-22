@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/app_state.dart';
+
 
 class AboutPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
+    
 
   
 

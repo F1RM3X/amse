@@ -6,20 +6,49 @@ import '../pages/film_page.dart';
 
 class ViewListFilm extends StatelessWidget{
   final String name;
-  final List<Film> filmList;
+  
 
   
   ViewListFilm({
-    required this.name,
-    required this.filmList
+    required this.name
+    
 
 });
+
+
   
   
   
   @override
   Widget build(BuildContext context){
     var appState = context.watch<MyAppState>();
+    List<Film> filmList = [];
+    List<Film> filmListFiltered = [];
+    String? selectedGenre;
+    String? selectedDirector;
+   
+
+    if (name == 'Home'){
+        filmList = appState.films;
+        filmListFiltered = appState.filteredFilmsHome;
+        selectedGenre = appState.selectedGenreHome;
+        selectedDirector = appState.selectedDirectorHome;
+        
+
+    }
+    else if (name == 'Like'){
+        filmList = appState.likes;
+        filmListFiltered = appState.filteredFilmsLike;
+        selectedGenre = appState.selectedGenreLike;
+        selectedDirector = appState.selectedDirectorLike;
+    }
+    else if (name == 'WL'){
+        filmList = appState.watchList;
+        filmListFiltered = appState.filteredFilmsWL;
+        selectedGenre = appState.selectedGenreWL;
+        selectedDirector = appState.selectedDirectorWL;
+    }
+
 
     final genres = ['All'];
     for ( var film in filmList){
@@ -57,8 +86,8 @@ class ViewListFilm extends StatelessWidget{
             children: [
               Expanded(
                 child: DropdownButton<String>(
-                  value: appState.selectedGenre,
-                  onChanged: (value) => appState.updateGenre(value!),
+                  value: selectedGenre,
+                  onChanged: (value) => appState.updateGenre(value!, name),
                   items: genres.map((genre) {
                     return DropdownMenuItem(
                       value: genre,
@@ -70,8 +99,8 @@ class ViewListFilm extends StatelessWidget{
               const SizedBox(width: 10),
               Expanded(
                 child: DropdownButton<String>(
-                  value: appState.selectedDirector,
-                  onChanged: (value) => appState.updateDirector(value!),
+                  value: selectedDirector,
+                  onChanged: (value) => appState.updateDirector(value!, name),
                   items: realisateurs.map((realisateur) {
                     return DropdownMenuItem(
                       value: realisateur,
@@ -88,9 +117,9 @@ class ViewListFilm extends StatelessWidget{
         Expanded(
         
             child: ListView.builder(
-              itemCount: appState.filteredFilms.length,
+              itemCount: filmListFiltered.length,
               itemBuilder: (context, index) {
-                final film = appState.filteredFilms[index];
+                final film = filmListFiltered[index];
                 return Card(
                     child: ListTile(
                       leading: Image.asset('lib/assets/${film.image}', fit: BoxFit.cover),

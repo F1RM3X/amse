@@ -59,35 +59,37 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateGenreHome (String genre){
+  void updateGenre (String genre, String page){
+    if (page == 'Home'){
     selectedGenreHome= genre;
     notifyListeners();
+    }
+    else if (page == 'Like'){
+    selectedGenreLike= genre;
+    notifyListeners();
+    }
+    if (page == 'WL'){
+    selectedGenreWL= genre;
+    notifyListeners();
+    }
   }
 
-  void updateDirectorHome (String director){
+  void updateDirector (String director, String page){
+    if (page=='Home'){
     selectedDirectorHome= director;
     notifyListeners();
   }
-
-  void updateGenreLike (String genre){
-    selectedGenreLike= genre;
-    notifyListeners();
-  }
-
-  void updateDirectorLike (String director){
+  else if (page=='Like'){
     selectedDirectorLike= director;
     notifyListeners();
   }
-
-  void updateGenreWL (String genre){
-    selectedGenreWL= genre;
-    notifyListeners();
-  }
-
-  void updateDirectorWL (String director){
+  if (page=='WL'){
     selectedDirectorWL= director;
     notifyListeners();
   }
+  }
+  
+
 
   List<Film> get filteredFilmsHome{
     return films.where((film){

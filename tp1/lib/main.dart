@@ -91,7 +91,7 @@ class MyAppState extends ChangeNotifier {
   List<Film> get filteredFilms{
     return films.where((film){
       final genreMatch = selectedGenre == 'All' || film.genre.contains(selectedGenre);
-      final directorMatch = selectedDirector == 'All' || film.realisateur.contains(selectedDirector);
+      final directorMatch = selectedDirector == 'All' || film.realisateur.toLowerCase().trim==selectedDirector.toLowerCase().trim;
       return genreMatch && directorMatch;
     }).toList();
   }
@@ -212,9 +212,9 @@ class HomePage extends StatelessWidget{
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: appState.films.length,
+            itemCount: appState.filteredFilms.length,
             itemBuilder: (context, index){
-              final film = appState.films[index];
+              final film = appState.filteredFilms[index];
               return ListTile(
                 leading: Image.asset('assets/${film.image}', width: 50),
                 title: Text(film.titre),

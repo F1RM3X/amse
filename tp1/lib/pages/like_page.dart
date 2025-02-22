@@ -1,33 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/app_state.dart';
-
+import '../models/view_list_film.dart';
 
 class LikePage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
+    var nomPage = 'Like';
 
-    if (appState.likes.isEmpty) {
-      return Scaffold(
-      appBar: AppBar(title: Center(child: Text('Likes'))),
-      body:Center(child: Text('No liked films yet.')),
-      );
-      
-    }
-
-    return Scaffold(
-      appBar: AppBar(title: Center(child: Text('Likes'))),
-      body: ListView.builder(
-      itemCount: appState.likes.length,
-      itemBuilder: (context, index){
-        final film= appState.likes[index];
-        return ListTile(
-          leading: Image.asset('lib/assets/${film.image}', width: 50) ,
-          title: Text(film.titre)
-          );
-      }
-    ));
-        
+    return ViewListFilm(name: nomPage);
   }    
 } 

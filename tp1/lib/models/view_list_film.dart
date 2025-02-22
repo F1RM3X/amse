@@ -28,7 +28,7 @@ class ViewListFilm extends StatelessWidget{
     String? selectedDirector;
    
 
-    if (name == 'Home'){
+    if (name == 'Great Movies App'){
         filmList = appState.films;
         filmListFiltered = appState.filteredFilmsHome;
         selectedGenre = appState.selectedGenreHome;
@@ -42,7 +42,7 @@ class ViewListFilm extends StatelessWidget{
         selectedGenre = appState.selectedGenreLike;
         selectedDirector = appState.selectedDirectorLike;
     }
-    else if (name == 'WL'){
+    else if (name == 'WatchList'){
         filmList = appState.watchList;
         filmListFiltered = appState.filteredFilmsWL;
         selectedGenre = appState.selectedGenreWL;
@@ -69,6 +69,13 @@ class ViewListFilm extends StatelessWidget{
     }
 
 
+
+  if (filmList.isEmpty) {
+      return Scaffold(
+      appBar: AppBar(title: Center(child: Text(name))),
+      body:Center(child:Text('No films add yet.')),
+      );
+    }
 
 
   return Scaffold(

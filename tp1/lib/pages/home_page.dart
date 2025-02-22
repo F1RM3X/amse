@@ -7,7 +7,7 @@ class HomePage extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     var appState = context.watch<MyAppState>();
-    var nomPage = 'Home';
+    var nomPage = 'Great Movies App';
 
     if (appState.isLoading){
       return const Center(

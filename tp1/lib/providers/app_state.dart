@@ -68,7 +68,7 @@ class MyAppState extends ChangeNotifier {
     selectedGenreLike= genre;
     notifyListeners();
     }
-    if (page == 'WL'){
+    else if (page == 'WL'){
     selectedGenreWL= genre;
     notifyListeners();
     }
@@ -83,7 +83,7 @@ class MyAppState extends ChangeNotifier {
     selectedDirectorLike= director;
     notifyListeners();
   }
-  if (page=='WL'){
+  else if (page=='WL'){
     selectedDirectorWL= director;
     notifyListeners();
   }
@@ -100,7 +100,7 @@ class MyAppState extends ChangeNotifier {
   }
 
   List<Film> get filteredFilmsLike{
-    return films.where((film){
+    return likes.where((film){
       final genreMatch = selectedGenreLike == 'All' || film.genre.contains(selectedGenreLike);
       final directorMatch = selectedDirectorLike == 'All' || film.realisateur.toLowerCase().trim==selectedDirectorLike.toLowerCase().trim;
       return genreMatch && directorMatch;
@@ -108,7 +108,7 @@ class MyAppState extends ChangeNotifier {
   }
 
   List<Film> get filteredFilmsWL{
-    return films.where((film){
+    return watchList.where((film){
       final genreMatch = selectedGenreWL == 'All' || film.genre.contains(selectedGenreWL);
       final directorMatch = selectedDirectorWL == 'All' || film.realisateur.toLowerCase().trim==selectedDirectorWL.toLowerCase().trim;
       return genreMatch && directorMatch;

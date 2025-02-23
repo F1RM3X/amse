@@ -83,61 +83,54 @@ class ViewListFilm extends StatelessWidget{
     title: Center(child: Text(name)),
   ),
   body: Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Column(
-      children: [
-        // Cette partie prend un espace limité et n'empêche pas l'AppBar d'être visible
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Text('Filter by'),
-                  const SizedBox(width: 20),
-                  Text('Genre'),
-                  const SizedBox(width:100),
-                  Text('Director'),
-
-                ]
-                
-              ),
-              Row(
-                children: [
-                  const SizedBox(width: 80),
-                  Expanded(
-                    child: DropdownButton<String>(
-                      
-                      value: selectedGenre,
-                      onChanged: (value) => appState.updateGenre(value!, name),
-                      items: genres.map((genre) {
-                        return DropdownMenuItem(
-                          
-                          value: genre,
-                          child: Text(genre),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: DropdownButton<String>(
-                      value: selectedDirector,
-                      onChanged: (value) => appState.updateDirector(value!, name),
-                      items: realisateurs.map((realisateur) {
-                        return DropdownMenuItem(
-                          value: realisateur,
-                          child: Text(realisateur),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+  padding: const EdgeInsets.all(8.0),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start, // Alignement à gauche
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: const [
+          Text('Filter by', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text('Genre', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text('Director', style: TextStyle(fontWeight: FontWeight.bold)),
+        ],
+      ),
+      const SizedBox(height: 8),
+      Row(
+        children: [
+          const SizedBox(width: 60), // Espace sous "Filter by"
+          Expanded(
+            child: DropdownButton<String>(
+              isExpanded: true, // Permet d'étendre sur tout l'espace
+              value: selectedGenre,
+              onChanged: (value) => appState.updateGenre(value!, name),
+              items: genres.map((genre) {
+                return DropdownMenuItem(
+                  value: genre,
+                  child: Text(genre),
+                );
+              }).toList(),
+            ),
           ),
-        ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: DropdownButton<String>(
+              isExpanded: true, // Pareil ici pour le director
+              value: selectedDirector,
+              onChanged: (value) => appState.updateDirector(value!, name),
+              items: realisateurs.map((realisateur) {
+                return DropdownMenuItem(
+                  value: realisateur,
+                  child: Text(realisateur),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    ],
+  ),
+),
 
         // Utilisation de Expanded pour laisser de la place pour l'AppBar
         Expanded(

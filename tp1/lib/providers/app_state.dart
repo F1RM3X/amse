@@ -18,6 +18,7 @@ class MyAppState extends ChangeNotifier {
   String? error;
 
   MyAppState() {
+    //chargement des listes
     loadFilms();
     loadLikes();
     loadWatchList();
@@ -47,23 +48,23 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
+  //favoris
   void loadLikes() async {
+    //chargement des favoris des anciennes utilisations
     final prefs = await SharedPreferences.getInstance();
     final likesData = prefs.getString('likes');
-    print("JSON brut chargé : $likesData");
     if (likesData != null) {
-      print("Favoris chargés : $likesData");
       List decodedLikes = jsonDecode(likesData);
-      likes = decodedLikes.map((film) => Film.fromJson(film)).toList();
-      print("Liste :  $likes");
+      likes =
+          decodedLikes
+              .map((film) => Film.fromJson(film))
+              .toList(); //ajout à la liste des likes
       notifyListeners();
-    } else {
-      print("Aucun favori trouvé");
     }
   }
 
-  //gestion des favoris
   void toggleLikes(Film film) {
+    //ajout et supression favoris
     if (likes.contains(film)) {
       likes.remove(film);
     } else {
@@ -74,12 +75,14 @@ class MyAppState extends ChangeNotifier {
   }
 
   void saveLikes() async {
+    //enregistrement des favoris dans un json pour qu'il soit conservé
     final prefs = await SharedPreferences.getInstance();
     List likesData = likes.map((film) => film.toJson()).toList();
     prefs.setString('likes', jsonEncode(likesData));
     print("Favoris sauvegardés : ${jsonEncode(likesData)}");
   }
 
+  //watchlist: meme fonctionnement que pour les favoris
   void loadWatchList() async {
     final watchlist = await SharedPreferences.getInstance();
     final wlData = watchlist.getString('wl');
@@ -90,7 +93,6 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
-  //gestion de la watchList
   void toggleWatchList(Film film) {
     if (watchList.contains(film)) {
       watchList.remove(film);
@@ -107,6 +109,7 @@ class MyAppState extends ChangeNotifier {
     watchlist.setString('wl', jsonEncode(wlData));
   }
 
+  //mise à jour des genres sélectionnés pour les différentes pages
   void updateGenre(String genre, String page) {
     if (page == 'Great Movies App') {
       selectedGenreHome = genre;
@@ -133,6 +136,7 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
+  //mise à jour des listes en fonctions des filtres
   List<Film> get filteredFilmsHome {
     return films.where((film) {
       final genreMatch =

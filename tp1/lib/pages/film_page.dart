@@ -6,7 +6,7 @@ import '../providers/app_state.dart';
 class FilmPage extends StatelessWidget {
   final Film film;
 
-  FilmPage({required this.film});
+  FilmPage({required this.film}); //constructeur
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +15,14 @@ class FilmPage extends StatelessWidget {
     bool inWatchList = appState.watchList.contains(film);
 
     return Scaffold(
-      appBar: AppBar(title: Text(film.titre)),
+      appBar: AppBar(title: Text(film.titre)), //titre page
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
+              //image
               child: Image.asset(
                 'lib/assets/${film.image}',
                 width: MediaQuery.of(context).size.width * 0.5,
@@ -29,8 +30,9 @@ class FilmPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            //réalisateur
             Card(
-              child: Container(
+              child: SizedBox(
                 height: 50,
                 child: Row(
                   children: [
@@ -46,13 +48,14 @@ class FilmPage extends StatelessWidget {
                 ),
               ),
             ),
+            //acteurs
             Card(
-              child: Container(
+              child: SizedBox(
                 height: 50,
                 child: Row(
                   children: [
                     SizedBox(width: 10),
-                    // Colonne pour "Actors"
+                    // colonne pour "Actors"
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +63,7 @@ class FilmPage extends StatelessWidget {
                         Text('Actors:', style: const TextStyle(fontSize: 16)),
                       ],
                     ),
-                    // Colonne pour les acteurs
+                    // colonne pour les acteurs
                     SizedBox(width: 10),
                     Expanded(
                       child: Column(
@@ -68,13 +71,10 @@ class FilmPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${film.acteurs.join(', ')}',
+                            film.acteurs.join(', '),
                             style: const TextStyle(fontSize: 16),
-                            softWrap:
-                                true, // Permet au texte de passer à la ligne si nécessaire
-                            overflow:
-                                TextOverflow
-                                    .visible, // Affiche tout le texte sans le tronquer
+                            softWrap: true,
+                            overflow: TextOverflow.visible,
                           ),
                         ],
                       ),
@@ -84,8 +84,9 @@ class FilmPage extends StatelessWidget {
                 ),
               ),
             ),
+            //genres
             Card(
-              child: Container(
+              child: SizedBox(
                 height: 50,
                 child: Row(
                   children: [
@@ -94,11 +95,8 @@ class FilmPage extends StatelessWidget {
                       child: Text(
                         'Genre: ${film.genre.join(', ')}',
                         style: const TextStyle(fontSize: 16),
-                        softWrap:
-                            true, // Permet au texte de passer à la ligne si nécessaire
-                        overflow:
-                            TextOverflow
-                                .visible, // Affiche tout le texte sans le tronquer
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
                       ),
                     ),
                     SizedBox(width: 10),
@@ -106,9 +104,9 @@ class FilmPage extends StatelessWidget {
                 ),
               ),
             ),
-
+            //durée et note
             Card(
-              child: Container(
+              child: SizedBox(
                 height: 50,
                 child: Row(
                   children: [
@@ -140,6 +138,7 @@ class FilmPage extends StatelessWidget {
             const Divider(thickness: 1),
             const SizedBox(height: 10),
             Text(
+              //résulé
               film.resume,
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 16),
@@ -148,6 +147,7 @@ class FilmPage extends StatelessWidget {
             const Divider(thickness: 1),
             const SizedBox(height: 10),
             Row(
+              //boutons
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(

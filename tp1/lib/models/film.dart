@@ -21,6 +21,7 @@ class Film {
     required this.acteurs,
   });
 
+  //création d'objets films depuis le fichier json comportant les informations
   factory Film.fromJson(Map<String, dynamic> json) {
     return Film(
       id: json['Id'] as String,
@@ -35,6 +36,7 @@ class Film {
     );
   }
 
+  // stockage dans un Json des films likés et ajoutés à la WL pour pouvoir les récupérer au chargement de l'application
   Map<String, dynamic> toJson() {
     return {
       'Id': id,

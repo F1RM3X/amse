@@ -4,19 +4,24 @@ import '../providers/app_state.dart';
 import 'film.dart';
 import '../pages/film_page.dart';
 
+//classe utilisée pour contruire les pages affichant une liste de films
 class ViewListFilm extends StatelessWidget {
-  final String name;
+  final String
+  name; //on récupère le nom de la page qui appelle la classe pour modifier des paramètres
 
+  //constructeur
   ViewListFilm({required this.name});
 
   @override
   Widget build(BuildContext context) {
+    //variables
     var appState = context.watch<MyAppState>();
     List<Film> filmList = [];
     List<Film> filmListFiltered = [];
     String? selectedGenre;
     String? selectedDirector;
 
+    //adaptation des variables à la page qui appelle ViewListFilm
     if (name == 'Great Movies App') {
       filmList = appState.films;
       filmListFiltered = appState.filteredFilmsHome;
@@ -34,6 +39,7 @@ class ViewListFilm extends StatelessWidget {
       selectedDirector = appState.selectedDirectorWL;
     }
 
+    //construction de la liste pour le filtre sur les réalisateurs qui s'adaptent au filtre sur le genre
     List<String> getAvailableDirectors(List<Film> films, String selectedGenre) {
       Set<String> directors = {'All'};
       for (var film in films) {
@@ -44,6 +50,9 @@ class ViewListFilm extends StatelessWidget {
       return directors.toList();
     }
 
+    var realisateurs = getAvailableDirectors(filmList, selectedGenre ?? 'All');
+
+    //meme chose pour les genres
     List<String> getAvailableGenres(List<Film> films, String selectedDirector) {
       Set<String> genres = {'All'};
       for (var film in films) {
@@ -55,8 +64,10 @@ class ViewListFilm extends StatelessWidget {
     }
 
     var genres = getAvailableGenres(filmList, selectedDirector ?? 'All');
-    var realisateurs = getAvailableDirectors(filmList, selectedGenre ?? 'All');
 
+    //affichage de la page
+
+    //si elle est vide, on affiche un message
     if (filmList.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Center(child: Text(name))),
@@ -65,6 +76,7 @@ class ViewListFilm extends StatelessWidget {
     }
 
     return Scaffold(
+      //affichage titre de la page
       appBar: AppBar(title: Center(child: Text(name))),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -73,6 +85,7 @@ class ViewListFilm extends StatelessWidget {
           children: [
             Divider(thickness: 1, color: Colors.grey[400], height: 1),
             SizedBox(height: 10),
+            //affichage des noms des filtres
             Row(
               children: const [
                 Expanded(
@@ -95,16 +108,26 @@ class ViewListFilm extends StatelessWidget {
                 ),
               ],
             ),
+            //affichage des filtres
             Row(
               children: [
-                Expanded(child: Container()),
+                Expanded(
+                  child: Container(),
+                ), //laisse de la place sous le 'filter by'
+                //filtre sur le genre
                 Expanded(
                   child: DropdownButton<String>(
                     isExpanded: true,
                     value: selectedGenre,
                     onChanged: (value) {
-                      appState.updateGenre(value!, name);
-                      realisateurs = getAvailableDirectors(filmList, value);
+                      appState.updateGenre(
+                        value!,
+                        name,
+                      ); //met à jour le genre seléctionner
+                      realisateurs = getAvailableDirectors(
+                        filmList,
+                        value,
+                      ); //met à jour la liste des réalisateurs à proposer
                     },
                     items:
                         genres.map((genre) {
@@ -119,13 +142,20 @@ class ViewListFilm extends StatelessWidget {
                         }).toList(),
                   ),
                 ),
+                //filtre sur le réalisateur
                 Expanded(
                   child: DropdownButton<String>(
                     isExpanded: true,
                     value: selectedDirector,
                     onChanged: (value) {
-                      appState.updateDirector(value!, name);
-                      genres = getAvailableGenres(filmList, value);
+                      appState.updateDirector(
+                        value!,
+                        name,
+                      ); //met à jour le réalisateur sélectionné
+                      genres = getAvailableGenres(
+                        filmList,
+                        value,
+                      ); //met à jour la liste des genres à proposer
                     },
                     items:
                         realisateurs.map((realisateur) {
@@ -142,6 +172,7 @@ class ViewListFilm extends StatelessWidget {
                 ),
               ],
             ),
+            //affichage de la liste de films
             Expanded(
               child: ListView.builder(
                 itemCount: filmListFiltered.length,
@@ -152,11 +183,15 @@ class ViewListFilm extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => FilmPage(film: film),
+                          builder:
+                              (context) => FilmPage(
+                                film: film,
+                              ), //quand on clique envoie sur la page détaillé du film
                         ),
                       );
                     },
                     child: Card(
+                      //chaque film dans une card de meme taille
                       margin: EdgeInsets.symmetric(
                         vertical: 8.0,
                         horizontal: 12.0,
@@ -167,6 +202,7 @@ class ViewListFilm extends StatelessWidget {
                         child: Row(
                           children: [
                             ClipRRect(
+                              //affichage de l'image
                               borderRadius: BorderRadius.circular(8.0),
                               child: Image.asset(
                                 'lib/assets/${film.image}',
@@ -177,6 +213,7 @@ class ViewListFilm extends StatelessWidget {
                             ),
                             SizedBox(width: 10),
                             Expanded(
+                              //affichage d'informations du film
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment:
@@ -199,20 +236,22 @@ class ViewListFilm extends StatelessWidget {
                               ),
                             ),
                             Column(
+                              //affichage des boutons
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 IconButton(
                                   iconSize: 20,
                                   icon: Icon(
-                                    appState.likes.contains(film)
+                                    appState.likes.contains(
+                                          film,
+                                        ) //coloré si dans la liste des favoris
                                         ? Icons.favorite
                                         : Icons.favorite_border,
-                                    /*color:
-                                        appState.likes.contains(film)
-                                            ? Colors.red
-                                            : Colors.grey,*/
                                   ),
-                                  onPressed: () => appState.toggleLikes(film),
+                                  onPressed:
+                                      () => appState.toggleLikes(
+                                        film,
+                                      ), //ajout aux favoris
                                 ),
                                 IconButton(
                                   iconSize: 20,
@@ -220,13 +259,11 @@ class ViewListFilm extends StatelessWidget {
                                     appState.watchList.contains(film)
                                         ? Icons.watch_later
                                         : Icons.watch_later_outlined,
-                                    /*color:
-                                        appState.watchList.contains(film)
-                                            ? Colors.blue
-                                            : Colors.grey,*/
                                   ),
                                   onPressed:
-                                      () => appState.toggleWatchList(film),
+                                      () => appState.toggleWatchList(
+                                        film,
+                                      ), //ajout à la WL
                                 ),
                               ],
                             ),

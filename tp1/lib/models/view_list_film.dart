@@ -55,11 +55,11 @@ class ViewListFilm extends StatelessWidget {
     }
 
     var genres = getAvailableGenres(
-      filmListFiltered,
+      filmList, // Utilise la liste complète ici
       selectedDirector ?? 'All',
     );
     var realisateurs = getAvailableDirectors(
-      filmListFiltered,
+      filmList, // Utilise la liste complète ici
       selectedGenre ?? 'All',
     );
 
@@ -149,12 +149,20 @@ class ViewListFilm extends StatelessWidget {
                     value: selectedGenre,
                     onChanged: (value) {
                       appState.updateGenre(value!, name);
+                      realisateurs = getAvailableDirectors(
+                        filmList,
+                        value,
+                      ); // ✅ Utilise la liste complète
                     },
                     items:
                         genres.map((genre) {
                           return DropdownMenuItem(
                             value: genre,
-                            child: Text(genre),
+                            child: Text(
+                              genre,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                           );
                         }).toList(),
                   ),
@@ -165,12 +173,17 @@ class ViewListFilm extends StatelessWidget {
                     value: selectedDirector,
                     onChanged: (value) {
                       appState.updateDirector(value!, name);
+                      genres = getAvailableGenres(filmList, value); // ✅
                     },
                     items:
                         realisateurs.map((realisateur) {
                           return DropdownMenuItem(
                             value: realisateur,
-                            child: Text(realisateur),
+                            child: Text(
+                              realisateur,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                           );
                         }).toList(),
                   ),
@@ -185,54 +198,86 @@ class ViewListFilm extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final film = filmListFiltered[index];
                   return Card(
-                    child: ListTile(
-                      leading: Image.asset(
-                        'lib/assets/${film.image}',
-                        fit: BoxFit.cover,
-                      ),
-                      title: Text(
-                        film.titre,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start, // Aligner à gauche
+                    margin: EdgeInsets.symmetric(
+                      vertical: 8.0,
+                      horizontal: 12.0,
+                    ),
+                    child: Container(
+                      height:
+                          120, // 📏 Hauteur fixe pour chaque carte (ajustable)
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
                         children: [
-                          Text(film.realisateur),
-                          Text(
-                            '${film.genre.join(', ')}',
-                          ), // Afficher les genres sous forme de liste
+                          // 📸 Image ajustée
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.asset(
+                              'lib/assets/${film.image}',
+                              fit: BoxFit.cover,
+                              width: 80,
+                              height: double.infinity,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+
+                          // 📝 Infos du film
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  film.titre,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                  softWrap:
+                                      true, // ✅ Permet le retour à la ligne
+                                ),
+                                Text("Director: ${film.realisateur}"),
+                                Text(
+                                  film.genre.join(', '),
+                                  style: TextStyle(color: Colors.grey[600]),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // ❤️ ⏰ Boutons réduits et bien espacés
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              IconButton(
+                                iconSize: 20,
+                                icon: Icon(
+                                  appState.likes.contains(film)
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color:
+                                      appState.likes.contains(film)
+                                          ? Colors.red
+                                          : Colors.grey,
+                                ),
+                                onPressed: () => appState.toggleLikes(film),
+                              ),
+                              IconButton(
+                                iconSize: 20,
+                                icon: Icon(
+                                  appState.watchList.contains(film)
+                                      ? Icons.watch_later
+                                      : Icons.watch_later_outlined,
+                                  color:
+                                      appState.watchList.contains(film)
+                                          ? Colors.blue
+                                          : Colors.grey,
+                                ),
+                                onPressed: () => appState.toggleWatchList(film),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              appState.likes.contains(film)
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                            ),
-                            onPressed: () => appState.toggleLikes(film),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              appState.watchList.contains(film)
-                                  ? Icons.watch_later
-                                  : Icons.watch_later_outlined,
-                            ),
-                            onPressed: () => appState.toggleWatchList(film),
-                          ),
-                        ],
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FilmPage(film: film),
-                          ),
-                        );
-                      },
                     ),
                   );
                 },

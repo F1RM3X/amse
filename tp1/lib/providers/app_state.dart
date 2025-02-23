@@ -136,7 +136,7 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
-  //mise à jour des listes en fonctions des filtres
+  //mise à jour des listes de films en fonctions des filtres
   List<Film> get filteredFilmsHome {
     return films.where((film) {
       final genreMatch =

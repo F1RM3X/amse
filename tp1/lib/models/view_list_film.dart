@@ -85,26 +85,26 @@ class ViewListFilm extends StatelessWidget{
   body: Padding(
   padding: const EdgeInsets.all(8.0),
   child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start, // Alignement à gauche
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
+      // Titres alignés correctement
       Row(
-        
         children: const [
-          Text('Filter by', style: TextStyle(fontWeight: FontWeight.bold)),
-          Text('Genre', style: TextStyle(fontWeight: FontWeight.bold)),
-          Text('Director', style: TextStyle(fontWeight: FontWeight.bold)),
+          Expanded(child: Text('Filter by', style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(child: Text('Genre', style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(child: Text('Director', style: TextStyle(fontWeight: FontWeight.bold))),
         ],
       ),
-      const SizedBox(height: 12),
+      const SizedBox(height: 8),
+      // Dropdowns alignés sous les bons titres
       Row(
         children: [
-          
           Expanded(
-            child: Container(),
+            child: Container(), // Vide pour l'alignement sous "Filter by"
           ),
-            Expanded(
+          Expanded(
             child: DropdownButton<String>(
-              isExpanded: true, // Permet d'étendre sur tout l'espace
+              isExpanded: true,
               value: selectedGenre,
               onChanged: (value) => appState.updateGenre(value!, name),
               items: genres.map((genre) {
@@ -115,10 +115,9 @@ class ViewListFilm extends StatelessWidget{
               }).toList(),
             ),
           ),
-          const SizedBox(width: 10),
           Expanded(
             child: DropdownButton<String>(
-              isExpanded: true, // Pareil ici pour le director
+              isExpanded: true,
               value: selectedDirector,
               onChanged: (value) => appState.updateDirector(value!, name),
               items: realisateurs.map((realisateur) {
@@ -131,6 +130,9 @@ class ViewListFilm extends StatelessWidget{
           ),
         ],
       ),
+    ],
+  ),
+),
     
 
         // Utilisation de Expanded pour laisser de la place pour l'AppBar

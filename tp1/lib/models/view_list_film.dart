@@ -95,7 +95,7 @@ class ViewListFilm extends StatelessWidget{
           Expanded(child: Text('Director', style: TextStyle(fontWeight: FontWeight.bold))),
         ],
       ),
-      const SizedBox(height: 8),
+      
       // Dropdowns alignés sous les bons titres
       Row(
         children: [
@@ -130,9 +130,7 @@ class ViewListFilm extends StatelessWidget{
           ),
         ],
       ),
-    ],
-  ),
-),
+    
     
 
         // Utilisation de Expanded pour laisser de la place pour l'AppBar

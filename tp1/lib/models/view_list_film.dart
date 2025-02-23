@@ -54,50 +54,8 @@ class ViewListFilm extends StatelessWidget {
       return genres.toList();
     }
 
-    var genres = getAvailableGenres(
-      filmList, // Utilise la liste complète ici
-      selectedDirector ?? 'All',
-    );
-    var realisateurs = getAvailableDirectors(
-      filmList, // Utilise la liste complète ici
-      selectedGenre ?? 'All',
-    );
-
-    /*var genres = ['All'];
-    for (var film in filmList) {
-      for (var genre in film.genre) {
-        if (genres.contains(genre) == false) {
-          genres.add(genre);
-        }
-      }
-    }
-
-    void updateListeGenres() {
-      genres = ['All'];
-      for (var film in filmListFiltered) {
-        for (var genre in film.genre) {
-          if (genres.contains(genre) == false) {
-            genres.add(genre);
-          }
-        }
-      }
-    }
-
-    var realisateurs = ['All'];
-    for (var film in filmList) {
-      if (realisateurs.contains(film.realisateur) == false) {
-        realisateurs.add(film.realisateur);
-      }
-    }
-
-    void updateListeRealisateurs() {
-      realisateurs = ['All'];
-      for (var film in filmListFiltered) {
-        if (realisateurs.contains(film.realisateur) == false) {
-          realisateurs.add(film.realisateur);
-        }
-      }
-    }*/
+    var genres = getAvailableGenres(filmList, selectedDirector ?? 'All');
+    var realisateurs = getAvailableDirectors(filmList, selectedGenre ?? 'All');
 
     if (filmList.isEmpty) {
       return Scaffold(
@@ -113,7 +71,8 @@ class ViewListFilm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Titres alignés correctement
+            Divider(thickness: 1, color: Colors.grey[400], height: 1),
+            SizedBox(height: 10),
             Row(
               children: const [
                 Expanded(
@@ -136,23 +95,16 @@ class ViewListFilm extends StatelessWidget {
                 ),
               ],
             ),
-
-            // Dropdowns alignés sous les bons titres
             Row(
               children: [
-                Expanded(
-                  child: Container(), // Vide pour l'alignement sous "Filter by"
-                ),
+                Expanded(child: Container()),
                 Expanded(
                   child: DropdownButton<String>(
                     isExpanded: true,
                     value: selectedGenre,
                     onChanged: (value) {
                       appState.updateGenre(value!, name);
-                      realisateurs = getAvailableDirectors(
-                        filmList,
-                        value,
-                      ); // ✅ Utilise la liste complète
+                      realisateurs = getAvailableDirectors(filmList, value);
                     },
                     items:
                         genres.map((genre) {
@@ -173,7 +125,7 @@ class ViewListFilm extends StatelessWidget {
                     value: selectedDirector,
                     onChanged: (value) {
                       appState.updateDirector(value!, name);
-                      genres = getAvailableGenres(filmList, value); // ✅
+                      genres = getAvailableGenres(filmList, value);
                     },
                     items:
                         realisateurs.map((realisateur) {
@@ -190,93 +142,96 @@ class ViewListFilm extends StatelessWidget {
                 ),
               ],
             ),
-
-            // Utilisation de Expanded pour laisser de la place pour l'AppBar
             Expanded(
               child: ListView.builder(
                 itemCount: filmListFiltered.length,
                 itemBuilder: (context, index) {
                   final film = filmListFiltered[index];
-                  return Card(
-                    margin: EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: 12.0,
-                    ),
-                    child: Container(
-                      height:
-                          120, // 📏 Hauteur fixe pour chaque carte (ajustable)
-                      padding: EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          // 📸 Image ajustée
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.asset(
-                              'lib/assets/${film.image}',
-                              fit: BoxFit.cover,
-                              width: 80,
-                              height: double.infinity,
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FilmPage(film: film),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      margin: EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 12.0,
+                      ),
+                      child: Container(
+                        height: 120,
+                        padding: EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: Image.asset(
+                                'lib/assets/${film.image}',
+                                fit: BoxFit.cover,
+                                width: 80,
+                                height: double.infinity,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 10),
-
-                          // 📝 Infos du film
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  film.titre,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    film.titre,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                    softWrap: true,
                                   ),
-                                  softWrap:
-                                      true, // ✅ Permet le retour à la ligne
+                                  Text("Director: ${film.realisateur}"),
+                                  Text(
+                                    film.genre.join(', '),
+                                    style: TextStyle(color: Colors.grey[600]),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                IconButton(
+                                  iconSize: 20,
+                                  icon: Icon(
+                                    appState.likes.contains(film)
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    /*color:
+                                        appState.likes.contains(film)
+                                            ? Colors.red
+                                            : Colors.grey,*/
+                                  ),
+                                  onPressed: () => appState.toggleLikes(film),
                                 ),
-                                Text("Director: ${film.realisateur}"),
-                                Text(
-                                  film.genre.join(', '),
-                                  style: TextStyle(color: Colors.grey[600]),
+                                IconButton(
+                                  iconSize: 20,
+                                  icon: Icon(
+                                    appState.watchList.contains(film)
+                                        ? Icons.watch_later
+                                        : Icons.watch_later_outlined,
+                                    /*color:
+                                        appState.watchList.contains(film)
+                                            ? Colors.blue
+                                            : Colors.grey,*/
+                                  ),
+                                  onPressed:
+                                      () => appState.toggleWatchList(film),
                                 ),
                               ],
                             ),
-                          ),
-
-                          // ❤️ ⏰ Boutons réduits et bien espacés
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              IconButton(
-                                iconSize: 20,
-                                icon: Icon(
-                                  appState.likes.contains(film)
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color:
-                                      appState.likes.contains(film)
-                                          ? Colors.red
-                                          : Colors.grey,
-                                ),
-                                onPressed: () => appState.toggleLikes(film),
-                              ),
-                              IconButton(
-                                iconSize: 20,
-                                icon: Icon(
-                                  appState.watchList.contains(film)
-                                      ? Icons.watch_later
-                                      : Icons.watch_later_outlined,
-                                  color:
-                                      appState.watchList.contains(film)
-                                          ? Colors.blue
-                                          : Colors.grey,
-                                ),
-                                onPressed: () => appState.toggleWatchList(film),
-                              ),
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   );

@@ -88,18 +88,21 @@ class ViewListFilm extends StatelessWidget{
     crossAxisAlignment: CrossAxisAlignment.start, // Alignement à gauche
     children: [
       Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        
         children: const [
           Text('Filter by', style: TextStyle(fontWeight: FontWeight.bold)),
           Text('Genre', style: TextStyle(fontWeight: FontWeight.bold)),
           Text('Director', style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
-      const SizedBox(height: 8),
+      const SizedBox(height: 12),
       Row(
         children: [
-          const SizedBox(width: 60), // Espace sous "Filter by"
+          
           Expanded(
+            child: Container(),
+          ),
+            Expanded(
             child: DropdownButton<String>(
               isExpanded: true, // Permet d'étendre sur tout l'espace
               value: selectedGenre,
@@ -128,9 +131,7 @@ class ViewListFilm extends StatelessWidget{
           ),
         ],
       ),
-    ],
-  ),
-),
+    
 
         // Utilisation de Expanded pour laisser de la place pour l'AppBar
         Expanded(

@@ -34,4 +34,25 @@ class Film {
       acteurs: List<String>.from(json['MainActors']),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'Id': id,
+      'Title': titre,
+      'PosterImage': image,
+      'Summary': resume,
+      'Duration': duree,
+      'Genre': genre,
+      'Rating': note,
+      'Director': realisateur,
+      'MainActors': acteurs,
+    };
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || (other is Film && titre == other.titre);
+
+  @override
+  int get hashCode => titre.hashCode;
 }

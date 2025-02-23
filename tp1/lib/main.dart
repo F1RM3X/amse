@@ -21,15 +21,15 @@ class MyApp extends StatelessWidget {
         title: 'Great Movies App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 5, 182, 43)),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 5, 182, 43),
+          ),
         ),
         home: MyHomePage(),
       ),
     );
   }
 }
-
-
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-final theme = Theme.of(context);
+    final theme = Theme.of(context);
 
     Widget page;
     //changement de pages
@@ -56,7 +56,8 @@ final theme = Theme.of(context);
         page = WatchListPage();
         break;
       case 3:
-        page= AboutPage();
+        page = AboutPage();
+        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -64,22 +65,25 @@ final theme = Theme.of(context);
       //barre de navigation
       body: page,
       bottomNavigationBar: BottomNavigationBar(
-        items: const[
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Likes'),
-          BottomNavigationBarItem(icon: Icon(Icons.watch_later), label: 'WatchList'),
-          BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About')
+          BottomNavigationBarItem(
+            icon: Icon(Icons.watch_later),
+            label: 'WatchList',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
         ],
-        
+
         selectedItemColor: theme.colorScheme.primary,
         unselectedItemColor: theme.colorScheme.secondary,
         currentIndex: selectedIndex,
         onTap: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
+          setState(() {
+            selectedIndex = value;
+          });
         },
-        ),
+      ),
     );
   }
 }

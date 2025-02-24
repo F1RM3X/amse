@@ -7,8 +7,10 @@ class AboutPage extends StatelessWidget {
       appBar: AppBar(title: Center(child: Text('About'))),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            Divider(thickness: 1, color: Colors.grey[400], height: 1),
+            SizedBox(height: 300),
             Center(child: Text('Developped by Maxence Firmin')),
             SizedBox(
               width: 300,

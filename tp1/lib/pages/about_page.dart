@@ -4,7 +4,11 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text('About'))),
+      appBar: AppBar(
+        title: Center(
+          child: Text('About', style: const TextStyle(fontSize: 30)),
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

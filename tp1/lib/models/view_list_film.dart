@@ -70,14 +70,31 @@ class ViewListFilm extends StatelessWidget {
     //si elle est vide, on affiche un message
     if (filmList.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: Center(child: Text(name))),
-        body: Center(child: Text('No films add yet.')),
+        appBar: AppBar(
+          title: Center(
+            child: Text(name, style: const TextStyle(fontSize: 30)),
+          ),
+        ),
+        body: Column(
+          children: [
+            Divider(thickness: 1, color: Colors.grey[400], height: 1),
+            SizedBox(height: 300),
+            Center(
+              child: Text(
+                'No movies add yet.',
+                style: const TextStyle(fontSize: 22),
+              ),
+            ),
+          ],
+        ),
       );
     }
 
     return Scaffold(
       //affichage titre de la page
-      appBar: AppBar(title: Center(child: Text(name))),
+      appBar: AppBar(
+        title: Center(child: Text(name, style: const TextStyle(fontSize: 30))),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(

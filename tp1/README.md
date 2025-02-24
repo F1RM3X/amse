@@ -1,16 +1,18 @@
 # tp1
-
-A new Flutter project.
+Projet de gestion de films.
+Réalisé dans le contexte de l'UV AMSE à IMT Nord Europe.
+Développée par Maxence FIRMIN
 
 ## Getting Started
+Pour lancer l'application:
 
-This project is a starting point for a Flutter application.
+```bash
+git clone http://www.github.com/F1RM3X/amse.git
+cd amse/tp1
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Features
+Cette application comporte 40 films qui peuvent être ajoutés à des listes (Likes, WatchList).
+Elle dispose de fonctions de filtres sur les réalisateurs et les genres de films.

@@ -95,6 +95,7 @@ class ViewListFilm extends StatelessWidget {
       appBar: AppBar(
         title: Center(child: Text(name, style: const TextStyle(fontSize: 30))),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(

@@ -27,7 +27,7 @@ class ViewListFilm extends StatelessWidget {
       filmListFiltered = appState.filteredFilmsHome;
       selectedGenre = appState.selectedGenreHome;
       selectedDirector = appState.selectedDirectorHome;
-    } else if (name == 'Like') {
+    } else if (name == 'Likes') {
       filmList = appState.likes;
       filmListFiltered = appState.filteredFilmsLike;
       selectedGenre = appState.selectedGenreLike;

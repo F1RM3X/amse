@@ -4,7 +4,7 @@ import '../models/view_list_film.dart';
 class LikePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var nomPage = 'Like';
+    var nomPage = 'Likes';
     //appel pour construire la page
     return ViewListFilm(name: nomPage);
   }
